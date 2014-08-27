@@ -55,7 +55,7 @@ php Based Sniffer 4
 
 Вы можете полюбоваться вышеупомянутыми достоинствами и испробовать функционал сниффера на странице превью (удалять и добавлять записи нельзя):
 
-[http://kanick.ru/sniffer/preview.jpg](http://kanick.ru/sniffer/preview.jpg)
+[<div style="text-align:center"><img src="http://kanick.ru/sniffer/preview.jpg"></div>](http://kanick.ru/sniffer/preview/log.php)
 
 #Помощь (Donate)
 
@@ -67,3 +67,4 @@ php Based Sniffer 4
 #Автор
 
 Меня зовут **Kanick**. На самых первых порах в создании сниффера также помогали **Егорыч+++**, **a33**, **chin**.
+
