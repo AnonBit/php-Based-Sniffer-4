@@ -1,0 +1,11 @@
+/* Matrix */
+body {background-color:#000000;}
+body, td {font-family:"Courier New", monospace; font-size:12px; color:#999999;}
+small, #copyright {font-size:11px;}
+.col {color:#26AD28;}
+.new {font-size:11px; color:#26AD28;}
+a {color:#999999; text-decoration:underline;}
+a:hover {color:#26AD28; text-decoration:underline;}
+table.unmarked {background-color:#000000; border:1px solid #000000;}
+table.marked {background-color:#061C07; border:1px solid #1E8620;}
+input.button {background-color:#000000; border-width:1px; font-family:"Courier New", moonspace; font-size:11px; color:#FFFFFF; text-indent:2px;}

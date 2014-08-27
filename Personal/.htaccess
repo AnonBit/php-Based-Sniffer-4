@@ -1,0 +1,8 @@
+<Files "s.gif">
+AddType application/x-httpd-php .gif
+</Files>
+
+<Files "data.txt">
+order allow,deny
+deny from all
+</Files>

@@ -1,0 +1,20 @@
+<Files "s.gif">
+AddType application/x-httpd-php .gif
+</Files>
+
+<Files "data.txt">
+order allow,deny
+deny from all
+</Files>
+
+<Files "users.txt">
+order allow,deny
+deny from all
+</Files>
+
+RewriteEngine on
+RewriteRule ^([[:alnum:]]+)\/log\.php log.php?%{QUERY_STRING}&user=$1 [L]
+RewriteRule ^([[:alnum:]]+)\/admin\.php admin.php?%{QUERY_STRING}&user=$1 [L]
+RewriteCond %{REQUEST_URI} !\/i\.gif
+RewriteCond %{REQUEST_URI} !\/s\.gif
+RewriteRule ^([[:alnum:]]+)\.gif$ s.gif?_user=$1&%{QUERY_STRING} [L]

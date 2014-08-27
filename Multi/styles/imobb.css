@@ -1,0 +1,12 @@
+/* i.moBB */
+body {background-color:#FFFFFF;}
+body, td {font-family:Verdana, sans-serif; font-size:11px; color:#888888;}
+small, #copyright {font-size:10px;}
+.col {color:#FF6600;}
+.new {font-size:10px; color:#FF6600;}
+a {color:#888888; text-decoration:underline;}
+a:hover {color:#FF6600; text-decoration:underline;}
+table.unmarked {background-color:#FFFFFF; border:1px solid #FFFFFF;}
+table.marked {background-color:#FFF4DD; border:1px solid #888888;}
+#change_ok {background-color:#FFF4DD; border:1px solid; padding:2px;}
+input.button {border-width:1px; font-family:Verdana, sans-serif; font-size:11px; text-indent:2px;}
